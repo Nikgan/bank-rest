@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${DB_NAME:-bankdb}
+      POSTGRES_USER: ${DB_USER:-bankuser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-bankpass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
