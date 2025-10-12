@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="1-create-users-and-roles" author="nikita">
+        <createTable tableName="users">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password_hash" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(200)"/>
+            <column name="enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="created_at" type="timestamp" defaultValueDate="NOW()"/>
+        </createTable>
+
+        <createTable tableName="roles">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="user_roles">
+            <column name="user_id" type="uuid"/>
+            <column name="role_id" type="uuid"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="user_roles" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"
+                constraintName="fk_user_roles_user"/>
+        <addForeignKeyConstraint
+                baseTableName="user_roles" baseColumnNames="role_id"
+                referencedTableName="roles" referencedColumnNames="id"
+                constraintName="fk_user_roles_role"/>
+    </changeSet>
+</databaseChangeLog>

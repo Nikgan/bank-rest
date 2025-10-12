@@ -1,8 +1,9 @@
 package org.example.bank.model;
 
 import jakarta.persistence.*;
-import java.util.UUID;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.util.*;
 
 @Getter
 @Setter
@@ -12,11 +13,13 @@ public class Role {
     @Id
     private UUID id;
 
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users = new HashSet<>();
 
-    public Role() { this.id = UUID.randomUUID(); }
+    public Role() {
+        this.id = UUID.randomUUID();
+    }
 }

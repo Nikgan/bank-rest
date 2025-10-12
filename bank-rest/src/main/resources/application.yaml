@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bankdb}
-    username: ${DB_USER:bankuser}
-    password: ${DB_PASSWORD:bankpass}
+    url: jdbc:postgresql://localhost:5432/bankdb
+    username: bankuser
+    password: bankpass
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -11,16 +11,15 @@ spring:
       hibernate:
         format_sql: true
     show-sql: false
-
-liquibase:
-  change-log: classpath:db/migration/db.changelog-master.xml
+  liquibase:
+    change-log: classpath:db/migration/db.changelog-master.xml
 
 app:
   jwt:
-    secret: ${JWT_SECRET:change-me-in-prod}
+    secret: very-secret-for-dev-minimum-32-bita
     accessTokenExpirationMin: 60
   crypto:
-    key: ${CARD_ENCRYPTION_KEY:change-me-in-prod}
+    key: very-secret-key-32chars
 
 server:
   port: 8080

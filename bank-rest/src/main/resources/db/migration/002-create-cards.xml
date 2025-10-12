@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <changeSet id="2-create-cards" author="you">
+            <createTable tableName="cards">
+                <column name="id" type="uuid"><constraints primaryKey="true" nullable="false"/></column>
+                <column name="owner_id" type="uuid"><constraints nullable="false"/></column>
+                <column name="pan_encrypted" type="text" />
+                <column name="pan_suffix" type="varchar(4)" />
+                <column name="holder_name" type="varchar(200)"/>
+                <column name="expiry_month" type="int"/>
+                <column name="expiry_year" type="int"/>
+                <column name="status" type="varchar(20)"/>
+                <column name="balance" type="numeric(19,2)" defaultValueNumeric="0.00"/>
+                <column name="created_at" type="timestamp" defaultValueDate="NOW()"/>
+            </createTable>
+
+            <addForeignKeyConstraint baseTableName="cards" baseColumnNames="owner_id"
+                                     referencedTableName="users" referencedColumnNames="id"
+                                     constraintName="fk_cards_owner"/>
+            <createIndex tableName="cards" indexName="idx_cards_pan_suffix">
+                <column name="pan_suffix"/>
+            </createIndex>
+    </changeSet>
+</databaseChangeLog>
