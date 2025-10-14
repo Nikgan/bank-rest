@@ -1,5 +1,6 @@
 package org.example.bank.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.example.bank.dto.AuthRequest;
 import org.example.bank.dto.JwtResponse;
 import org.example.bank.dto.RegisterRequest;
@@ -8,13 +9,14 @@ import org.example.bank.model.User;
 import org.example.bank.repository.RoleRepository;
 import org.example.bank.repository.UserRepository;
 import org.example.bank.security.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/auth")
@@ -38,13 +40,20 @@ public class AuthController {
         user.setEmail(req.getEmail());
         user.setEnabled(true);
 
-        Role role = roleRepository.findByName("USER").orElseGet(() -> {
-            Role r = new Role();
-            r.setName("USER");
-            return roleRepository.save(r);
-        });
+        // Определяем роль (если явно передана "admin" в username/email — дадим ADMIN)
+        Role defaultRole = roleRepository.findByName("USER")
+                .orElseGet(() -> roleRepository.save(new Role() {{ setName("USER"); }}));
 
-        user.getRoles().add(role);
+        Set<Role> roles = new HashSet<>();
+        roles.add(defaultRole);
+
+        if (req.getUsername().equalsIgnoreCase("admin")) {
+            Role adminRole = roleRepository.findByName("ADMIN")
+                    .orElseGet(() -> roleRepository.save(new Role() {{ setName("ADMIN"); }}));
+            roles.add(adminRole);
+        }
+
+        user.setRoles(roles);
         userRepository.save(user);
 
         return ResponseEntity.ok("Пользователь зарегистрирован");
