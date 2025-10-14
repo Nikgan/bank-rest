@@ -14,6 +14,10 @@ spring:
   liquibase:
     change-log: classpath:db/migration/db.changelog-master.xml
 
+springdoc:
+  swagger-ui:
+    persist-authorization: true
+
 app:
   jwt:
     secret: very-secret-for-dev-minimum-32-bita

@@ -1,5 +1,8 @@
 package org.example.bank.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.example.bank.dto.AuthRequest;
 import org.example.bank.dto.JwtResponse;
@@ -59,6 +62,11 @@ public class AuthController {
         return ResponseEntity.ok("Пользователь зарегистрирован");
     }
 
+    @Operation(summary = "Вход в систему", description = "Авторизация пользователя и получение JWT токена")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешная авторизация"),
+            @ApiResponse(responseCode = "401", description = "Неверные учетные данные")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest req) {
         User user = userRepository.findByUsername(req.getUsername())
