@@ -24,18 +24,17 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    //Создание JWT токена с ролями
+    // Создание JWT токена с ролями
     public String createToken(String username, Set<Role> roles) {
-        Map<String, Object> claims = new HashMap<>();
+        Claims claims = Jwts.claims().setSubject(username); // обязательно ставим username в subject
         claims.put("roles", roles.stream()
                 .map(Role::getName)
                 .collect(Collectors.toList()));
 
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + validityInMin * 60_000); // минуты → миллисекунды
+        Date expiry = new Date(now.getTime() + validityInMin * 60_000L);
 
         return Jwts.builder()
-                .setSubject(username)
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
@@ -43,26 +42,34 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    //Получить имя пользователя из токена
     public String getUsername(String token) {
-        return getAllClaims(token).getSubject();
+        String username = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+        System.out.println("JwtTokenProvider: extracted username = " + username);
+        return username;
     }
 
-    //Получить роли пользователя из токена
     @SuppressWarnings("unchecked")
     public List<String> getRoles(String token) {
-        Object roles = getAllClaims(token).get("roles");
-        if (roles instanceof List<?> list) {
-            return list.stream().map(Object::toString).toList();
-        }
-        return Collections.emptyList();
+        List<String> roles = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles", List.class);
+        System.out.println("JwtTokenProvider: extracted roles = " + roles);
+        return roles != null ? roles : Collections.emptyList();
     }
 
     // Проверка валидности токена
     public boolean validateToken(String token) {
         try {
-            getAllClaims(token);
-            return true;
+            Claims claims = getAllClaims(token);
+            return claims.getExpiration().after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }

@@ -3,7 +3,6 @@ package org.example.bank.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.bank.dto.TransferDto;
 import org.example.bank.mapper.TransferMapper;
-import org.example.bank.model.Card;
 import org.example.bank.model.Transfer;
 import org.example.bank.service.CardService;
 import org.example.bank.service.TransferService;

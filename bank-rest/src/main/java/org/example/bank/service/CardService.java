@@ -1,8 +1,12 @@
 package org.example.bank.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.bank.dto.CardDto;
+import org.example.bank.mapper.CardMapper;
 import org.example.bank.model.Card;
 import org.example.bank.repository.CardRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -70,7 +74,12 @@ public class CardService {
         return card.getBalance();
     }
 
-    // Всё про карту и её шифр/дешифр
+    public Page<CardDto> getUserCards(UUID ownerId, String status, String holderName, String panSuffix, Pageable pageable) {
+        Page<Card> page = cardRepository.findFilteredByOwner(ownerId, status, holderName, panSuffix, pageable);
+        return page.map(CardMapper::toDto);
+    }
+
+    // Всё про номер карты и еего шифр/дешифр
 
     private String generatePan() {
         StringBuilder sb = new StringBuilder();
