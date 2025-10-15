@@ -26,7 +26,7 @@ public class JwtTokenProvider {
 
     // Создание JWT токена с ролями
     public String createToken(String username, Set<Role> roles) {
-        Claims claims = Jwts.claims().setSubject(username); // обязательно ставим username в subject
+        Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", roles.stream()
                 .map(Role::getName)
                 .collect(Collectors.toList()));

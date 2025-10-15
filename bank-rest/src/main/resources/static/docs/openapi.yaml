@@ -1,0 +1,185 @@
+openapi: 3.0.3
+info:
+  title: Bank Management API
+  version: "1.0.0"
+  description: >
+    REST API банковской системы (MVP).  
+    Включает авторизацию, операции с картами и переводы между пользователями.
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+tags:
+  - name: Auth
+    description: Авторизация и регистрация
+  - name: Cards
+    description: Управление банковскими картами
+  - name: Transfers
+    description: Денежные переводы между картами
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Пользователь успешно зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Авторизация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Неверный логин или пароль
+
+  /api/cards:
+    get:
+      tags: [Cards]
+      summary: Получить список карт текущего пользователя
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Фильтр по статусу
+      responses:
+        '200':
+          description: Список карт
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardDto'
+        '401':
+          description: Неавторизован
+
+  /api/transfers:
+    post:
+      tags: [Transfers]
+      summary: Создать перевод между картами
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '200':
+          description: Перевод успешно выполнен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferDto'
+        '400':
+          description: Ошибка перевода
+
+components:
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: testuser
+        password:
+          type: string
+          example: pass123
+      required: [username, password]
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9...
+
+    RegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [username, email, password]
+
+    CardDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        holderName:
+          type: string
+        status:
+          type: string
+          enum: [ACTIVE, BLOCKED]
+        balance:
+          type: number
+          format: double
+          example: 1200.50
+
+    TransferRequest:
+      type: object
+      properties:
+        fromCardId:
+          type: string
+          format: uuid
+        toCardId:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          format: double
+          example: 50.00
+        description:
+          type: string
+          example: Перевод другу
+      required: [fromCardId, toCardId, amount]
+
+    TransferDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fromCardId:
+          type: string
+        toCardId:
+          type: string
+        amount:
+          type: number
+        status:
+          type: string
+          example: COMPLETED
+        timestamp:
+          type: string
+          format: date-time

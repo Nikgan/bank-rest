@@ -9,6 +9,7 @@ import org.example.bank.repository.RoleRepository;
 import org.example.bank.repository.UserRepository;
 import org.example.bank.security.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,8 @@ class AuthControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // Регистрация
     @Test
+    @DisplayName("Тест регистрации")
     void register_NewUser_ShouldReturnOk() {
         RegisterRequest req = new RegisterRequest("testuser", "pass", "email@test.com");
 
@@ -55,8 +56,8 @@ class AuthControllerTest {
         verify(userRepository).save(any(User.class));
     }
 
-    // Регистрация уже существующего пользователя
     @Test
+    @DisplayName("Регистрация уже существ-щего пользователя")
     void register_ExistingUser_ShouldReturnBadRequest() {
         RegisterRequest req = new RegisterRequest("testuser", "pass", "email@test.com");
         when(userRepository.findByUsername(req.getUsername())).thenReturn(Optional.of(new User()));
@@ -67,8 +68,8 @@ class AuthControllerTest {
         assertTrue(response.getBody().toString().contains("уже существует"));
     }
 
-    // Успешный логин
     @Test
+    @DisplayName("Тест успешного логина")
     void login_ValidCredentials_ShouldReturnToken() {
         AuthRequest req = new AuthRequest("testuser", "pass");
         User user = new User();
@@ -88,8 +89,8 @@ class AuthControllerTest {
         assertEquals("mocked_token", ((JwtResponse) response.getBody()).getToken());
     }
 
-    // Неверный пароль
     @Test
+    @DisplayName("Проверка авторизации с неверным паролем")
     void login_InvalidPassword_ShouldReturnUnauthorized() {
         AuthRequest req = new AuthRequest("testuser", "wrongpass");
         User user = new User();
@@ -105,8 +106,8 @@ class AuthControllerTest {
         assertTrue(response.getBody().toString().contains("Неверный логин"));
     }
 
-    // Несуществующий пользователь
     @Test
+    @DisplayName("Проверка на авторизацию несуществ-го пользователя")
     void login_NonexistentUser_ShouldThrowException() {
         AuthRequest req = new AuthRequest("ghost", "pass");
         when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());

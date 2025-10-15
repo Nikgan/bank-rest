@@ -6,6 +6,8 @@ import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CardDto {
     private UUID id;
     private String maskedPan;
