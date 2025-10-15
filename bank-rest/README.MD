@@ -12,7 +12,6 @@ REST API для управления пользователями и банко�
 - **Spring Boot 3**
 - **Spring Security (JWT)**
 - **Spring Data JPA + PostgreSQL**
-- **MapStruct / ручной Mapper**
 - **Lombok**
 - **JUnit 5 + Mockito**
 - **Testcontainers (интеграционные тесты)**
