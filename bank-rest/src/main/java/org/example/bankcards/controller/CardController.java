@@ -2,12 +2,14 @@ package org.example.bankcards.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bankcards.dto.CardDto;
+import org.example.bankcards.exception.ApiException;
 import org.example.bankcards.mapper.CardMapper;
 import org.example.bankcards.entity.Card;
 import org.example.bankcards.service.CardService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +64,7 @@ public class CardController {
             @PathVariable UUID cardId
     ) {
         Card card = cardService.getUserCard(userId, cardId)
-                .orElseThrow(() -> new RuntimeException("Карта не найдена или не принадлежит пользователю"));
+                .orElseThrow(() -> new ApiException("Карта не найдена или не принадлежит пользователю", HttpStatus.NOT_FOUND.value()));
         return ResponseEntity.ok(card.getBalance());
     }
 
@@ -73,7 +75,7 @@ public class CardController {
             @PathVariable UUID cardId
     ) {
         Card card = cardService.getUserCard(userId, cardId)
-                .orElseThrow(() -> new RuntimeException("Карта не найдена или не принадлежит пользователю"));
+                .orElseThrow(() -> new ApiException("Карта не найдена или не принадлежит пользователю", HttpStatus.NOT_FOUND.value()));
         cardService.blockCard(card.getId());
         return ResponseEntity.ok("Карта заблокирована");
     }
@@ -85,7 +87,7 @@ public class CardController {
             @PathVariable UUID cardId
     ) {
         Card card = cardService.getUserCard(userId, cardId)
-                .orElseThrow(() -> new RuntimeException("Карта не найдена или не принадлежит пользователю"));
+                .orElseThrow(() -> new ApiException("Карта не найдена или не принадлежит пользователю", HttpStatus.NOT_FOUND.value()));
         cardService.deleteCard(card.getId());
         return ResponseEntity.ok("Карта удалена");
     }

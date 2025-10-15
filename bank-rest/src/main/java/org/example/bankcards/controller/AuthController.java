@@ -9,6 +9,7 @@ import org.example.bankcards.dto.JwtResponse;
 import org.example.bankcards.dto.RegisterRequest;
 import org.example.bankcards.entity.Role;
 import org.example.bankcards.entity.User;
+import org.example.bankcards.exception.ApiException;
 import org.example.bankcards.repository.RoleRepository;
 import org.example.bankcards.repository.UserRepository;
 import org.example.bankcards.security.JwtTokenProvider;
@@ -69,7 +70,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest req) {
         User user = userRepository.findByUsername(req.getUsername())
-                .orElseThrow(() -> new RuntimeException("Неверный логин или пароль"));
+                .orElseThrow(() -> new ApiException("Неверный логин или пароль", HttpStatus.UNAUTHORIZED.value()));
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPasswordHash())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неверный логин или пароль");

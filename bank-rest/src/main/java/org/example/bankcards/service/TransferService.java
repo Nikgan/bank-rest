@@ -3,8 +3,10 @@ package org.example.bankcards.service;
 import lombok.RequiredArgsConstructor;
 import org.example.bankcards.entity.Card;
 import org.example.bankcards.entity.Transfer;
+import org.example.bankcards.exception.ApiException;
 import org.example.bankcards.repository.CardRepository;
 import org.example.bankcards.repository.TransferRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +29,16 @@ public class TransferService {
         }
 
         Card from = cardRepository.findWithLockingById(fromCardId)
-                .orElseThrow(() -> new RuntimeException("Исходная карта не найдена"));
+                .orElseThrow(() -> new ApiException("Исходная карта не найдена", HttpStatus.NOT_FOUND.value()));
         Card to = cardRepository.findWithLockingById(toCardId)
-                .orElseThrow(() -> new RuntimeException("Целевая карта не найдена"));
+                .orElseThrow(() -> new ApiException("Целевая карта не найдена", HttpStatus.NOT_FOUND.value()));
 
         if (!"ACTIVE".equals(from.getStatus()) || !"ACTIVE".equals(to.getStatus())) {
-            throw new RuntimeException("Обе карты должны быть активными");
+            throw new ApiException("Обе карты должны быть активными", HttpStatus.BAD_REQUEST.value());
         }
 
         if (from.getBalance().compareTo(amount) < 0) {
-            throw new RuntimeException("Недостаточно средств на исходной карте");
+            throw new ApiException("Недостаточно средств на исходной карте", HttpStatus.BAD_REQUEST.value());
         }
 
         // Списание и зачисление

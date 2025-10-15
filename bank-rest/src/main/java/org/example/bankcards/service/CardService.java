@@ -2,11 +2,13 @@ package org.example.bankcards.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.bankcards.dto.CardDto;
+import org.example.bankcards.exception.ApiException;
 import org.example.bankcards.mapper.CardMapper;
 import org.example.bankcards.entity.Card;
 import org.example.bankcards.repository.CardRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -52,14 +54,14 @@ public class CardService {
 
     public void blockCard(UUID cardId) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Карта не найдена"));
+                .orElseThrow(() -> new ApiException("Карта не найдена", HttpStatus.NOT_FOUND.value()));
         card.setStatus("BLOCKED");
         cardRepository.save(card);
     }
 
     public void activateCard(UUID cardId) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Карта не найдена"));
+                .orElseThrow(() -> new ApiException("Карта не найдена", HttpStatus.NOT_FOUND.value()));
         card.setStatus("ACTIVE");
         cardRepository.save(card);
     }
@@ -70,7 +72,7 @@ public class CardService {
 
     public BigDecimal getBalance(UUID cardId) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Карта не найдена"));
+                .orElseThrow(() -> new ApiException("Карта не найдена", HttpStatus.NOT_FOUND.value()));
         return card.getBalance();
     }
 
