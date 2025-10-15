@@ -14,7 +14,6 @@ REST API для управления пользователями и банко�
 - **Spring Data JPA + PostgreSQL**
 - **Lombok**
 - **JUnit 5 + Mockito**
-- **Testcontainers (интеграционные тесты)**
 - **Docker / Docker Compose**
 - **Springdoc OpenAPI (Swagger UI)**
 
