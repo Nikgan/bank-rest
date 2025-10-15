@@ -14,7 +14,6 @@ REST API для управления пользователями и банко�
 - **Spring Data JPA + PostgreSQL**
 - **Lombok**
 - **JUnit 5 + Mockito**
-- **Testcontainers (интеграционные тесты)**
 - **Docker / Docker Compose**
 - **Springdoc OpenAPI (Swagger UI)**
 
@@ -22,14 +21,10 @@ REST API для управления пользователями и банко�
 
 ## Запуск проекта
 
-### Через IDE (IntelliJ IDEA)
+### Через Docker
 
-1. Поднять Docker, выполнив команду docker-compose up --build.
-2. Открыть проект в IntelliJ IDEA.
-3. Найти класс `BankRestApplication.java` (в пакете `org.example.bankcards`).
-4. Запустить его как **Spring Boot Application**.
-5. API будет доступен по адресу:  
-    `http://localhost:8080/api/v1`
+1. Перейти в корень проекта
+2. Выполнить docker-compose up --build
 
 ---
 
