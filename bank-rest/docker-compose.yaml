@@ -1,14 +1,35 @@
-version: '3.8'
+version: "3.9"
+
 services:
-  db:
+  bankcards-db:
     image: postgres:15
     environment:
-      POSTGRES_DB: ${DB_NAME:-bankdb}
-      POSTGRES_USER: ${DB_USER:-bankuser}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-bankpass}
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+      POSTGRES_DB: bankcards
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d bankcards"]
+      interval: 5s
+      retries: 10
+      timeout: 5s
+
+  app:
+    build: .
+    container_name: bankcards-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      bankcards-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://bankcards-db:5432/bankcards
+      SPRING_DATASOURCE_USERNAME: bankuser
+      SPRING_DATASOURCE_PASSWORD: bankpass
+    restart: on-failure
+
 volumes:
   pgdata:
