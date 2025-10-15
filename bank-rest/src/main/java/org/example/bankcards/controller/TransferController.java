@@ -24,7 +24,7 @@ public class TransferController {
     private final TransferService transferService;
     private final CardService cardService;
 
-    // Перевод между картами(всеми)
+    // Перевод между картами
     @PostMapping
     public ResponseEntity<TransferDto> makeTransfer(
             @AuthenticationPrincipal(expression = "id") UUID userId,
