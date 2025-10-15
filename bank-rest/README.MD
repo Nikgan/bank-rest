@@ -28,10 +28,6 @@ REST API для управления пользователями и банко�
 
 ---
 
-###  Через Maven (если без IDE)
-
-mvnw.cmd clean package
-java -jar target/bank-0.0.1-SNAPSHOT.jar
 
 ###  Документация
 Swagger UI:
