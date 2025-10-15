@@ -44,3 +44,4 @@ Swagger UI:
 http://localhost:8080/swagger-ui/index.html
 
 
+Так как проект не боевой, не стал подключать .env, все секреты лежат в application.yaml :)
